@@ -1,0 +1,43 @@
+models:
+  - name: stg_stripe__payments
+    description: one unique payment per row
+    columns:
+      - name: payment_id
+        description: Primary key for the Stripe payment record.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: order_id
+        description: Identifier of the order this payment is associated with.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__orders')
+                field: order_id
+
+      - name: payment_method
+        description: Payment method used for the transaction (e.g., card).
+        data_tests:
+          - not_null
+
+      - name: status
+        description: Payment status from Stripe (e.g., succeeded, failed, pending). "{{ doc('payment_status') }}"
+        data_tests:
+          - not_null
+
+      - name: amount
+        description: Payment amount in dollars (converted from cents in the source).
+        data_tests:
+          - not_null
+
+      - name: created_at
+        description: Timestamp when the payment was created in Stripe.
+        data_tests:
+          - not_null
+
+      - name: _batched_at
+        description: Timestamp when the record was batched/loaded from the source (used for source freshness).
+        data_tests:
+          - not_null
